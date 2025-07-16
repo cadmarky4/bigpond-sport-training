@@ -54,10 +54,10 @@ if (isset($SEC_check_config)) {
 		$ENV_File_Missing = true;
 
 		$DB_CONFIG_Default = [
-			'DB_Host' => 'interchange.proxy.rlwy.net',
+			'DB_Host' => 'caboose.proxy.rlwy.net',
 			'DB_Name' => 'railway',
 			'DB_User' => 'root',
-			'DB_Pass' => 'BUFUTWhqmANKPmEWFOSTJdibZHXvIUqm',
+			'DB_Pass' => 'ogAZOhKPclJdgRSWlxZJfnxfSqNINxQL',
 		];
 		
 		//overwrites
@@ -148,10 +148,10 @@ if (isset($SEC_check_config)) {
 			
 			try {
 				// FIX: Use Railway database credentials with port for test connection
-				$host = $_POST['DB_Host'] ?? (getenv('MYSQL_HOST') ?: 'interchange.proxy.rlwy.net');
-				$port = getenv('MYSQL_PORT') ?: '18598';
+				$host = $_POST['DB_Host'] ?? (getenv('MYSQL_HOST') ?: 'caboose.proxy.rlwy.net');
+				$port = getenv('MYSQL_PORT') ?: '35948';
 				$user = $_POST['DB_User'] ?? (getenv('MYSQL_USER') ?: 'root');
-				$password = $_POST['DB_Pass'] ?? (getenv('MYSQL_PASSWORD') ?: 'BUFUTWhqmANKPmEWFOSTJdibZHXvIUqm');
+				$password = $_POST['DB_Pass'] ?? (getenv('MYSQL_PASSWORD') ?: 'ogAZOhKPclJdgRSWlxZJfnxfSqNINxQL');
 				
 				//not select Database
 				$conn = mysqli_connect($host, $user, $password, null, (int)$port);
@@ -217,11 +217,11 @@ if (isset($SEC_check_config)) {
 						$db_error = false;
 						try {
 							// FIX: Use Railway database credentials from environment variables
-							$host = getenv('MYSQL_HOST') ?: 'interchange.proxy.rlwy.net';
-							$port = getenv('MYSQL_PORT') ?: '18598';
+							$host = getenv('MYSQL_HOST') ?: 'caboose.proxy.rlwy.net';
+							$port = getenv('MYSQL_PORT') ?: '35948';
 							$database = getenv('MYSQL_DATABASE') ?: 'railway';
 							$user = getenv('MYSQL_USER') ?: 'root';
-							$password = getenv('MYSQL_PASSWORD') ?: 'BUFUTWhqmANKPmEWFOSTJdibZHXvIUqm';
+							$password = getenv('MYSQL_PASSWORD') ?: 'ogAZOhKPclJdgRSWlxZJfnxfSqNINxQL';
 							
 							// Connect with correct Railway credentials and port
 							$conn = mysqli_connect($host, $user, $password, $database, (int)$port);
@@ -290,11 +290,11 @@ if (isset($SEC_check_config)) {
 				$db_error = false;
 				
 				// FIX: Use Railway database credentials with port
-				$host = getenv('MYSQL_HOST') ?: 'interchange.proxy.rlwy.net';
-				$port = getenv('MYSQL_PORT') ?: '18598';
+				$host = getenv('MYSQL_HOST') ?: 'caboose.proxy.rlwy.net';
+				$port = getenv('MYSQL_PORT') ?: '35948';
 				$database = getenv('MYSQL_DATABASE') ?: 'railway';
 				$user = getenv('MYSQL_USER') ?: 'root';
-				$password_db = getenv('MYSQL_PASSWORD') ?: 'BUFUTWhqmANKPmEWFOSTJdibZHXvIUqm';
+				$password_db = getenv('MYSQL_PASSWORD') ?: 'ogAZOhKPclJdgRSWlxZJfnxfSqNINxQL';
 				
 				$conn = mysqli_connect($host, $user, $password_db, $database, (int)$port);
 
