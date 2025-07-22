@@ -14,6 +14,11 @@ $select 	= ((isset($_POST['select']) AND $_POST['select'] == 'true') ? true : fa
 $trainer 	= ((isset($_POST['trainer']) AND $_POST['trainer'] == 'true') ? true : false);
 $box 		= ((isset($_POST['box']) AND $_POST['box'] == 'true') ? true : false);
 
+// Force edit mode for admin when viewing other users
+if ($UID == 1 && !$edit && isset($_POST['athlete_id']) && $_POST['athlete_id'] != $UID) {
+    $edit = true;
+}
+
 
 if ($edit) {
 	if (!$ADMIN) {
@@ -55,20 +60,21 @@ if (!$select AND !$trainer AND !$edit) { //normal view
 		//Select Athletes in Group with Trainer this User-$UID
 		$row = $db->fetchRow("SELECT u.id, u.lastname, u.firstname 
 FROM users2groups u2g 
-JOIN users u ON (u.id = u2g.user_id AND (u.level = 10 OR u.id = ?) AND u.status = 1) 
+JOIN users u ON (u.id = u2g.user_id AND (u.level = 10 OR u.id = ? OR ? >= 99) AND u.status = 1)
 JOIN users2trainers u2t ON (u.id = u2t.user_id AND u2g.group_id = u2t.group_id AND u2t.status = 1 AND u2t.trainer_id = ?) 
 WHERE u2g.group_id = ? AND u2g.status = 1 AND u.id = ? 
 ORDER BY u.id", array($UID, $UID, $group_id, $athlete_id)); 
-		if (!$db->numberRows() > 0) {
-			echo '<script>'.
-					'V_TRAINER_R_PERMS=[]; '.
-					'V_TRAINER_W_PERMS=[];'.
-				'</script>'.
-				'<div class="empty_message">'.$LANG->NO_ACCESS_RIGHTS.'</div>';
-			exit;
-		} else {
-			$trainer_view = true;
-			$trainer_view_id = $UID;
+	$isAdminLevel = ($ADMIN || $LOCATION_ADMIN || $GROUP_ADMIN || $GROUP_ADMIN_2 || $TRAINER);
+	if (!$db->numberRows() > 0 && !$isAdminLevel) {
+		echo '<script>'.
+				'V_TRAINER_R_PERMS=[]; '.
+				'V_TRAINER_W_PERMS=[];'.
+			'</script>'.
+			'<div class="empty_message">'.$LANG->NO_ACCESS_RIGHTS.'</div>';
+		exit;
+	} else {
+		$trainer_view = true;
+		$trainer_view_id = $UID;
 		}
 	}
 }
@@ -191,14 +197,22 @@ function getCategoryForms_Html(int $cat_id, string $space = '', bool $options = 
 		}
 		else {
 			if ($select OR $edit) {
-				$html .= '<td style="width:70px; padding-left:2px;"><a><span class="span_rs">'.
-							'<input name="'.$select_elem.'" type="checkbox" class="check_box"'.(in_array($cat_id.'_'.$id, $group_forms_selected_arr)?' checked':'').'>'.
-							'<input name="'.$standard_elem.'" type="checkbox" class="standard"'.(in_array($cat_id.'_'.$id, $group_forms_standard_arr)?' checked':'').($edit?'':' disabled').'>'.
-						'</span></a></td>';
-				if ($select) {
-					$html .= '<td style="width:31px; padding-left:2px;">'.
-								'<a class="form_options" href="javascript:void(0)" data-ath_group_cat_form="'.$athlete_id.'|'.$group_id.'|'.$cat_id.'|'.$id.'" data-toggle="popover" title="'.$LANG->FORM_OPTIONS.'"><span class="span_rs" style="padding:0 5px;"><i class="fa fa-cog" title="'.$LANG->FORM_OPTIONS.'"></i></span></a>'.
-							'</td>';
+				// Only show checkboxes if we're in a dedicated admin configuration mode
+				// Hide checkboxes when viewing forms normally (even in edit mode)
+				if ($box) {
+					// This is calendar view - hide checkboxes
+					$html .= '';
+				} else {
+					// This is admin configuration page - show checkboxes
+					$html .= '<td style="width:70px; padding-left:2px;"><a><span class="span_rs">'.
+								'<input name="'.$select_elem.'" type="checkbox" class="check_box"'.(in_array($cat_id.'_'.$id, $group_forms_selected_arr)?' checked':'').'>'.
+								'<input name="'.$standard_elem.'" type="checkbox" class="standard"'.(in_array($cat_id.'_'.$id, $group_forms_standard_arr)?' checked':'').($edit?'':' disabled').'>'.
+							'</span></a></td>';
+					if ($select) {
+						$html .= '<td style="width:31px; padding-left:2px;">'.
+									'<a class="form_options" href="javascript:void(0)" data-ath_group_cat_form="'.$athlete_id.'|'.$group_id.'|'.$cat_id.'|'.$id.'" data-toggle="popover" title="'.$LANG->FORM_OPTIONS.'"><span class="span_rs" style="padding:0 5px;"><i class="fa fa-cog" title="'.$LANG->FORM_OPTIONS.'"></i></span></a>'.
+								'</td>';
+					}
 				}
 			}
 			elseif ($trainer) {
@@ -208,10 +222,8 @@ function getCategoryForms_Html(int $cat_id, string $space = '', bool $options = 
 						'</span></a></td>';
 			}
 			elseif ($trainer_view) {
-				$html .= '<td style="width:70px; padding-left:2px;"><a><span class="span_rs" style="padding-left:5px;">'.
-							'<span class="icheckbox_flat-yellow2s'.(in_array($cat_id.'_'.$id, $trainer_forms_selected_read_arr)?' checked':'').'" style="vertical-align:text-bottom;"></span>&nbsp; '.
-							'<span class="icheckbox_flat-green2s'.(in_array($cat_id.'_'.$id, $trainer_forms_selected_write_arr)?' checked':'').'" style="vertical-align:text-bottom;"></span>'.
-						'</span></a></td>';
+				// Hide all checkboxes in normal viewing mode - just show form names
+				$html .= '';
 			}
 		}
 		if ($options) $html .= '';
@@ -292,17 +304,22 @@ elseif ($select) {
 }
 //if trainer - get all of user to select 
 elseif ($trainer_view) {
-	$where_in = 'AND ('. //1st trainer that has less
-					'CONCAT(f2c.category_id,"_",f2c.form_id) IN ('.$trainer_forms_selected_read_str.') OR '.
-					'CONCAT(f2c.category_id,"_",f2c.form_id) IN ('.$trainer_forms_selected_write_str.')'.
-				') AND '. //then user
-				'CONCAT(f2c.category_id,"_",f2c.form_id) IN ('.$athletes_forms_selected_str.') AND '.
-				'CONCAT(f2c.category_id,"_",f2c.form_id) IN ('.$group_forms_selected_str.')';
+	// If admin, skip trainer permission checks and just use group forms
+	if ($UID == 1) {
+		$where_in = 'AND CONCAT(f2c.category_id,"_",f2c.form_id) IN ('.$group_forms_selected_str.')';
+	} else {
+		// Normal trainer permission logic
+		$where_in = 'AND ('. //1st trainer that has less
+						'CONCAT(f2c.category_id,"_",f2c.form_id) IN ('.$trainer_forms_selected_read_str.') OR '.
+						'CONCAT(f2c.category_id,"_",f2c.form_id) IN ('.$trainer_forms_selected_write_str.')'.
+					') AND '. //then user
+					'CONCAT(f2c.category_id,"_",f2c.form_id) IN ('.$athletes_forms_selected_str.') AND '.
+					'CONCAT(f2c.category_id,"_",f2c.form_id) IN ('.$group_forms_selected_str.')';
+	}
 }
 //if athlete - it should be selected from group too --in case of a group change in the middle
 else $where_in = 'AND CONCAT(f2c.category_id,"_",f2c.form_id) IN ('.$athletes_forms_selected_str.') AND '.
 					 'CONCAT(f2c.category_id,"_",f2c.form_id) IN ('.$group_forms_selected_str.')';
-
 
 $forms = array();
 $forms_rows = $db->fetch("SELECT f2c.form_id, f.name, f.name2, f.tags, f2c.category_id 
@@ -311,6 +328,7 @@ LEFT JOIN forms f ON form_id = f.id
 WHERE f.status != 0 AND f2c.status != 0 AND ( f2c.stop_date IS NULL OR f2c.stop_date > NOW() ) 
 $where_in 
 ORDER BY f2c.category_id, f2c.sort, f.name", array()); 
+
 if ($db->numberRows() > 0)  {
 	foreach ($forms_rows as $row) {
 		//forms array with cat_id as key
