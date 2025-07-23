@@ -21,7 +21,7 @@ if ($SEC_check != $CONFIG['SEC_Page_Secret']) exit;
 				<?php if ($ADMIN) { ?>
 					<li><a href="administration.php" class="nav_link nav_admin"><i class="fa fa-cogs"></i> &nbsp; <?=$LANG->BUTTON_ADMINISTRATION;?></a></li>
 					
-					<li><a href="config.php" class="nav_link"><i class="fa fa-cog" style="font-size:17px;"></i></a></li>
+					<li><a href="config.php" class="nav_link"><i class="fa fa-cog" style="font-size:17px;"></i>  Configuration</a></li>
 				<?php } ?>
 
 					<li class="dropdown">
