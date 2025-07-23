@@ -77,8 +77,6 @@ font-weight:100;margin:0 0 24px}
 
 	<?php require('php/inc.header.php');?>
 	
-	<?php require('php/inc.nav_lang.php');?>
-
 	<div class="container">	
 		<header style="padding:2em 2em 1em;">
 			<h1><b><?=$LANG->APP_NAME;?></b><span><?=$LANG->APP_INFO;?></span></h1>	
