@@ -8,7 +8,7 @@ array(
 	'LANG_GERMAN' 	=> 'Deutsch',
 
 	//all pages
-    'APP_NAME'			=> 'Big Pond',
+    'APP_NAME'			=> 'Intellite',
     'APP_INFO'			=> 'Athlete Monitoring in Sport Practice and Research',
     'HOMEPAGE'			=> 'Homepage',
     'PAGE_TOP'			=> 'Page top',
@@ -601,7 +601,7 @@ array(
 <br><b>Your account is still inactive.</b>
 <br><b>You will receive an E-Mail as soon as your account has been activated.</b>
 <br>
-<br>Big Pond Team',
+<br>Intellite Team',
 
 	//user email activate
     'EMAIL_ACCOUNT_ACTIVATE_SUBJECT' => "Your account has been activated ({HTTP}{DOMAIN}/{REGmon_Folder})",
@@ -614,7 +614,7 @@ array(
 <br>
 <br>Username: {Username}
 <br>
-<br>Big Pond Team',
+<br>Intellite Team',
 	
 
 	//admin email new user
@@ -634,7 +634,7 @@ array(
 <br>Click here to active the account:
 <br>{Activate_Link} Activate Account </a>
 <br>
-<br>Big Pond Team',
+<br>Intellite Team',
 
 	//admin email new sport
 	'EMAIL_NEW_SPORTS_ADMIN_SUBJECT' => "New sport user proposal ({Sports}) for {HTTP}{DOMAIN}/{REGmon_Folder}",
@@ -650,6 +650,6 @@ array(
 <br>Group: {Group}
 <br>Profile: {Profile}
 <br>
-<br>Big Pond Team"
+<br>Intellite Team"
 );
 ?>

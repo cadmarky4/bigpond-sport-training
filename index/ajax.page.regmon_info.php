@@ -19,7 +19,7 @@ a.support_email:hover {
 <div style="background:white;">
 	<hr>
 	<p style="margin:10px; font-size: 40px; text-align: center;">
-		<b>BigPond</b>
+		<b>Intellite</b>
 	</p>
 	<p style="margin: 10px; font-size: 25px; text-align:center;">
 		<?=$LANG->INFO_PAGE_SUBTITLE?><br>

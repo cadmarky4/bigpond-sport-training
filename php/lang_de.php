@@ -8,7 +8,7 @@ array(
 	'LANG_GERMAN' 	=> 'Deutsch',
 
 	//all pages
-    'APP_NAME'			=> 'Bigpond',
+    'APP_NAME'			=> 'Intellite',
     'APP_INFO'			=> 'Athletenmonitoring in Sportpraxis und Wissenschaft',
     'HOMEPAGE'			=> 'Startseite',
     'PAGE_TOP'			=> 'Seitenanfang',
